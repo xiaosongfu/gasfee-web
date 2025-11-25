@@ -18,6 +18,7 @@
     let currentGasPrice = $state<number>(0);
     let autoRefreshInterval: number | null = null;
     let showSettings = $state<boolean>(false);
+    let isDarkMode = $state<boolean>(false);
 
     async function calculateGasFee() {
         if (gasAmount <= 0) {
@@ -68,6 +69,22 @@
             }
         }
 
+        // Load theme from localStorage
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            isDarkMode = savedTheme === "dark";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+        } else {
+            // Use system preference if no saved theme
+            isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)",
+            ).matches;
+            document.documentElement.setAttribute(
+                "data-theme",
+                isDarkMode ? "dark" : "light",
+            );
+        }
+
         // Initial calculation
         calculateGasFee();
 
@@ -81,6 +98,15 @@
         gasCalculatorService.setApiKeys(keys);
         // Refresh data with new keys
         calculateGasFee();
+    }
+
+    function toggleTheme() {
+        isDarkMode = !isDarkMode;
+        document.documentElement.setAttribute(
+            "data-theme",
+            isDarkMode ? "dark" : "light",
+        );
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
     }
 
     onDestroy(() => {
@@ -107,32 +133,95 @@
                         <span class="title-icon">⛽</span>
                         EVM Gas Fee Calculator
                     </h1>
-                    <p class="subtitle">
-                        Real-time gas fee calculations across multiple chains
-                    </p>
                 </div>
-                <button
-                    class="settings-button"
-                    onclick={() => (showSettings = true)}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                <div class="header-right">
+                    <button
+                        class="theme-button"
+                        onclick={toggleTheme}
+                        title={isDarkMode
+                            ? "Switch to Light Mode"
+                            : "Switch to Dark Mode"}
                     >
-                        <path
-                            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-                        />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    <span>API Keys</span>
-                </button>
+                        {#if isDarkMode}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="5" />
+                                <line x1="12" y1="1" x2="12" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="23" />
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                                <line
+                                    x1="18.36"
+                                    y1="18.36"
+                                    x2="19.78"
+                                    y2="19.78"
+                                />
+                                <line x1="1" y1="12" x2="3" y2="12" />
+                                <line x1="21" y1="12" x2="23" y2="12" />
+                                <line
+                                    x1="4.22"
+                                    y1="19.78"
+                                    x2="5.64"
+                                    y2="18.36"
+                                />
+                                <line
+                                    x1="18.36"
+                                    y1="5.64"
+                                    x2="19.78"
+                                    y2="4.22"
+                                />
+                            </svg>
+                            <span>Light</span>
+                        {:else}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                                />
+                            </svg>
+                            <span>Dark</span>
+                        {/if}
+                    </button>
+                    <button
+                        class="settings-button"
+                        onclick={() => (showSettings = true)}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                            />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <span>API Keys</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -191,8 +280,8 @@
     <footer class="footer">
         <div class="container">
             <p>
-                Supported chains: Ethereum • BNB Chain • Base • Arbitrum •
-                Berachain • Optimism
+                Supported chains: Ethereum • Polygon • BNB Chain • Arbitrum •
+                Berachain • Optimism • zkSync Era •••
             </p>
         </div>
     </footer>
@@ -215,7 +304,7 @@
     .container {
         max-width: var(--container-max-width);
         margin: 0 auto;
-        padding: 0 1.5rem;
+        padding: 0 3rem;
         width: 100%;
     }
 
@@ -252,6 +341,39 @@
 
     .header-left {
         flex: 1;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .theme-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+    }
+
+    .theme-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-button svg {
+        flex-shrink: 0;
     }
 
     .settings-button {
@@ -296,12 +418,6 @@
         font-size: 2rem;
     }
 
-    .subtitle {
-        font-size: 1.125rem;
-        opacity: 0.9;
-        position: relative;
-    }
-
     .main {
         flex: 1;
         padding: 3rem 0;
@@ -310,11 +426,12 @@
     .calculator-card {
         background: var(--surface);
         border-radius: 24px;
-        padding: 2.5rem;
+        padding: 2.5rem 3rem;
         box-shadow:
             0 4px 6px rgba(0, 0, 0, 0.05),
             0 10px 20px rgba(0, 0, 0, 0.05);
         border: 1px solid var(--border);
+        width: 100%;
     }
 
     .card-section {
