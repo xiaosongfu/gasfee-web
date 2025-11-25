@@ -77,7 +77,7 @@
                 <input
                     type="password"
                     bind:value={keys.etherscan}
-                    placeholder="Etherscan API key"
+                    placeholder="Enter your Etherscan API key"
                 />
                 <a
                     href="https://etherscan.io/apis"
