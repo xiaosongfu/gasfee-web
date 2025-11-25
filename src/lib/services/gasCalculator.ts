@@ -9,6 +9,9 @@ export interface UserApiKeys {
     arbiscan?: string;
     berachainscan?: string;
     optimism?: string;
+    polygonscan?: string;
+    zksync?: string;
+    snowtrace?: string;
 }
 
 export class GasCalculatorService {
@@ -28,7 +31,10 @@ export class GasCalculatorService {
             base: 'basescan',
             arbitrum: 'arbiscan',
             berachain: 'berachainscan',
-            optimism: 'optimism'
+            optimism: 'optimism',
+            polygon: 'polygonscan',
+            zksync: 'zksync',
+            avalanche: 'snowtrace'
         };
 
         const keyName = keyMap[chainId];

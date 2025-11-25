@@ -14,6 +14,9 @@
         arbiscan: string;
         berachainscan: string;
         optimism: string;
+        polygonscan: string;
+        zksync: string;
+        snowtrace: string;
     }
 
     let { onSave, onClose }: Props = $props();
@@ -26,6 +29,9 @@
         arbiscan: "",
         berachainscan: "",
         optimism: "",
+        polygonscan: "",
+        zksync: "",
+        snowtrace: "",
     });
 
     onMount(() => {
@@ -56,6 +62,9 @@
             arbiscan: "",
             berachainscan: "",
             optimism: "",
+            polygonscan: "",
+            zksync: "",
+            snowtrace: "",
         };
     }
 </script>
@@ -164,6 +173,48 @@
                     />
                     <a
                         href="https://optimistic.etherscan.io/apis"
+                        target="_blank"
+                        class="help-link">Get Key →</a
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label>Polygon (PolygonScan)</label>
+                    <input
+                        type="password"
+                        bind:value={keys.polygonscan}
+                        placeholder="PolygonScan API key"
+                    />
+                    <a
+                        href="https://polygonscan.com/apis"
+                        target="_blank"
+                        class="help-link">Get Key →</a
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label>zkSync Era</label>
+                    <input
+                        type="password"
+                        bind:value={keys.zksync}
+                        placeholder="zkSync API key"
+                    />
+                    <a
+                        href="https://explorer.zksync.io"
+                        target="_blank"
+                        class="help-link">Explorer →</a
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label>Avalanche (Snowtrace)</label>
+                    <input
+                        type="password"
+                        bind:value={keys.snowtrace}
+                        placeholder="Snowtrace API key"
+                    />
+                    <a
+                        href="https://snowtrace.io/apis"
                         target="_blank"
                         class="help-link">Get Key →</a
                     >

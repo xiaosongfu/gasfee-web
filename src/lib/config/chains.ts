@@ -60,6 +60,36 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         gasOracleEndpoint: 'https://api-optimistic.etherscan.io/api',
         apiKeyEnvVar: 'OPTIMISM_API_KEY',
         explorerUrl: 'https://optimistic.etherscan.io'
+    },
+    polygon: {
+        id: 'polygon',
+        name: 'Polygon',
+        chainId: 137,
+        nativeToken: 'MATIC',
+        coinMarketCapId: '3890',
+        gasOracleEndpoint: 'https://api.polygonscan.com/api',
+        apiKeyEnvVar: 'POLYGONSCAN_API_KEY',
+        explorerUrl: 'https://polygonscan.com'
+    },
+    zksync: {
+        id: 'zksync',
+        name: 'zkSync Era',
+        chainId: 324,
+        nativeToken: 'ETH',
+        coinMarketCapId: '1027',
+        gasOracleEndpoint: 'https://api-era.zksync.network/api',
+        apiKeyEnvVar: 'ZKSYNC_API_KEY',
+        explorerUrl: 'https://explorer.zksync.io'
+    },
+    avalanche: {
+        id: 'avalanche',
+        name: 'Avalanche',
+        chainId: 43114,
+        nativeToken: 'AVAX',
+        coinMarketCapId: '5805',
+        gasOracleEndpoint: 'https://api.snowtrace.io/api',
+        apiKeyEnvVar: 'SNOWTRACE_API_KEY',
+        explorerUrl: 'https://snowtrace.io'
     }
 };
 
