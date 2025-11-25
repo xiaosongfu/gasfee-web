@@ -138,6 +138,9 @@
         font-size: 1.5rem;
         font-weight: 700;
         font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
     .result-value.large {
