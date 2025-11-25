@@ -19,7 +19,6 @@ export const GET: RequestHandler = async ({ url, request }) => {
 
     try {
         const apiUrl = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbols}`;
-
         const response = await fetch(apiUrl, {
             headers: {
                 'X-CMC_PRO_API_KEY': apiKey,
@@ -46,9 +45,9 @@ export const GET: RequestHandler = async ({ url, request }) => {
             return json(prices);
         }
 
-        return json({ error: 'Failed to fetch token prices' }, { status: 500 });
+        return json({ error: 'Failed to fetch token prices in server' + JSON.stringify(data) }, { status: 500 });
     } catch (error) {
-        console.error('Error fetching token prices:', error);
-        return json({ error: 'Failed to fetch token prices' }, { status: 500 });
+        console.error('Error fetching token prices in server:', error);
+        return json({ error: 'Failed to fetch token prices in server' + error }, { status: 500 });
     }
 };

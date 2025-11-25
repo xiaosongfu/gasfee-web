@@ -4,14 +4,6 @@ import type { ChainConfig } from '$lib/types/chains';
 export interface UserApiKeys {
     coinmarketcap?: string;
     etherscan?: string;
-    bscscan?: string;
-    basescan?: string;
-    arbiscan?: string;
-    berachainscan?: string;
-    optimism?: string;
-    polygonscan?: string;
-    zksync?: string;
-    snowtrace?: string;
 }
 
 export class GasCalculatorService {
@@ -21,30 +13,17 @@ export class GasCalculatorService {
         this.apiKeys = keys;
     }
 
-    async fetchGasPrice(chainId: string): Promise<GasPriceData> {
+    async fetchGasPrice(chainId: number): Promise<GasPriceData> {
         const headers: HeadersInit = {};
 
-        // Add user API key to headers based on chain
-        const keyMap: Record<string, keyof UserApiKeys> = {
-            ethereum: 'etherscan',
-            bnb: 'bscscan',
-            base: 'basescan',
-            arbitrum: 'arbiscan',
-            berachain: 'berachainscan',
-            optimism: 'optimism',
-            polygon: 'polygonscan',
-            zksync: 'zksync',
-            avalanche: 'snowtrace'
-        };
-
-        const keyName = keyMap[chainId];
-        if (keyName && this.apiKeys[keyName]) {
-            headers[`x-${keyName}_api_key`] = this.apiKeys[keyName]!;
+        // Add etherscan API key if available
+        if (this.apiKeys.etherscan) {
+            headers['x-etherscan-api-key'] = this.apiKeys.etherscan;
         }
 
         const response = await fetch(`/api/gas-price?chain=${chainId}`, { headers });
         if (!response.ok) {
-            throw new Error('Failed to fetch gas price');
+            throw new Error('Failed to fetch gas price in client');
         }
         return response.json();
     }
@@ -59,7 +38,7 @@ export class GasCalculatorService {
 
         const response = await fetch(`/api/token-price?symbols=${symbol}`, { headers });
         if (!response.ok) {
-            throw new Error('Failed to fetch token price');
+            throw new Error('Failed to fetch token price in client');
         }
         const data = await response.json();
         return data[symbol];
@@ -69,7 +48,7 @@ export class GasCalculatorService {
         gasAmount: number,
         gasPriceGwei: number,
         tokenPriceUSD: number,
-        chain: ChainConfig
+        tokenName: string,
     ): CalculationResult {
         // Formula: (gasAmount * gasPriceGwei * tokenPriceUSD) / 1e9
         // gasPriceGwei is already in Gwei, so we divide by 1e9 to convert to ETH/BNB/etc
@@ -80,7 +59,7 @@ export class GasCalculatorService {
             gasPrice: gasPriceGwei,
             tokenPrice: tokenPriceUSD,
             totalCostUSD,
-            chain: chain.name,
+            tokenName: tokenName,
             timestamp: Date.now()
         };
     }
@@ -90,14 +69,20 @@ export class GasCalculatorService {
         gasAmount: number
     ): Promise<CalculationResult> {
         const [gasPrice, tokenPrice] = await Promise.all([
-            this.fetchGasPrice(chainConfig.id),
+            this.fetchGasPrice(chainConfig.chainId),
             this.fetchTokenPrice(chainConfig.nativeToken)
         ]);
+
+        console.log("----------------calculateGasFee----------")
+        console.log("chainConfig", chainConfig)
+        console.log("tokenPrice", tokenPrice)
+        console.log("gasPrice", gasPrice)
+        console.log("----------------calculateGasFee----------\n")
 
         // Use proposed gas price as default
         const gasPriceGwei = parseFloat(gasPrice.proposeGasPrice);
 
-        return this.calculateCost(gasAmount, gasPriceGwei, tokenPrice.price, chainConfig);
+        return this.calculateCost(gasAmount, gasPriceGwei, tokenPrice.price, chainConfig.nativeToken);
     }
 }
 

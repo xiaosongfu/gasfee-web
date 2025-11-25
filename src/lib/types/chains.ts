@@ -1,12 +1,7 @@
 export interface ChainConfig {
-	id: string;
 	name: string;
 	chainId: number;
 	nativeToken: string;
-	coinMarketCapId: string;
-	gasOracleEndpoint: string;
-	apiKeyEnvVar: string;
-	explorerUrl: string;
 }
 
 export interface GasPriceData {
@@ -26,8 +21,8 @@ export interface TokenPriceData {
 export interface CalculationResult {
 	gasAmount: number;
 	gasPrice: number; // in Gwei
+	tokenName: string;
 	tokenPrice: number; // in USD
 	totalCostUSD: number;
-	chain: string;
 	timestamp: number;
 }

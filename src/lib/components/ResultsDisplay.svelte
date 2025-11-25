@@ -36,7 +36,7 @@
             </div>
 
             <div class="result-card">
-                <div class="result-label">{result.chain} Price</div>
+                <div class="result-label">{result.tokenName} Price</div>
                 <div class="result-value">
                     {formatCurrency(result.tokenPrice)}
                 </div>

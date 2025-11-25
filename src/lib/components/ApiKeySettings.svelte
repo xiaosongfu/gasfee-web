@@ -9,14 +9,6 @@
     interface ApiKeys {
         coinmarketcap: string;
         etherscan: string;
-        bscscan: string;
-        basescan: string;
-        arbiscan: string;
-        berachainscan: string;
-        optimism: string;
-        polygonscan: string;
-        zksync: string;
-        snowtrace: string;
     }
 
     let { onSave, onClose }: Props = $props();
@@ -24,14 +16,6 @@
     let keys = $state<ApiKeys>({
         coinmarketcap: "",
         etherscan: "",
-        bscscan: "",
-        basescan: "",
-        arbiscan: "",
-        berachainscan: "",
-        optimism: "",
-        polygonscan: "",
-        zksync: "",
-        snowtrace: "",
     });
 
     onMount(() => {
@@ -57,14 +41,6 @@
         keys = {
             coinmarketcap: "",
             etherscan: "",
-            bscscan: "",
-            basescan: "",
-            arbiscan: "",
-            berachainscan: "",
-            optimism: "",
-            polygonscan: "",
-            zksync: "",
-            snowtrace: "",
         };
     }
 </script>
@@ -97,128 +73,17 @@
             </div>
 
             <div class="key-section">
-                <h3>Blockchain Explorer API Keys</h3>
-
-                <div class="input-group">
-                    <label>Ethereum (Etherscan)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.etherscan}
-                        placeholder="Etherscan API key"
-                    />
-                    <a
-                        href="https://etherscan.io/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>BNB Chain (BscScan)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.bscscan}
-                        placeholder="BscScan API key"
-                    />
-                    <a
-                        href="https://bscscan.com/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>Base (BaseScan)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.basescan}
-                        placeholder="BaseScan API key"
-                    />
-                    <a
-                        href="https://basescan.org/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>Arbitrum (Arbiscan)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.arbiscan}
-                        placeholder="Arbiscan API key"
-                    />
-                    <a
-                        href="https://arbiscan.io/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>Berachain</label>
-                    <input
-                        type="password"
-                        bind:value={keys.berachainscan}
-                        placeholder="Berachain API key"
-                    />
-                </div>
-
-                <div class="input-group">
-                    <label>Optimism</label>
-                    <input
-                        type="password"
-                        bind:value={keys.optimism}
-                        placeholder="Optimism API key"
-                    />
-                    <a
-                        href="https://optimistic.etherscan.io/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>Polygon (PolygonScan)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.polygonscan}
-                        placeholder="PolygonScan API key"
-                    />
-                    <a
-                        href="https://polygonscan.com/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>zkSync Era</label>
-                    <input
-                        type="password"
-                        bind:value={keys.zksync}
-                        placeholder="zkSync API key"
-                    />
-                    <a
-                        href="https://explorer.zksync.io"
-                        target="_blank"
-                        class="help-link">Explorer →</a
-                    >
-                </div>
-
-                <div class="input-group">
-                    <label>Avalanche (Snowtrace)</label>
-                    <input
-                        type="password"
-                        bind:value={keys.snowtrace}
-                        placeholder="Snowtrace API key"
-                    />
-                    <a
-                        href="https://snowtrace.io/apis"
-                        target="_blank"
-                        class="help-link">Get Key →</a
-                    >
-                </div>
+                <h3>Etherscan API Keys</h3>
+                <input
+                    type="password"
+                    bind:value={keys.etherscan}
+                    placeholder="Etherscan API key"
+                />
+                <a
+                    href="https://etherscan.io/apis"
+                    target="_blank"
+                    class="help-link">Get Key →</a
+                >
             </div>
         </div>
 

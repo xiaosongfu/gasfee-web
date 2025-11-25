@@ -35,7 +35,7 @@
             result = calculationResult;
             currentGasPrice = calculationResult.gasPrice;
         } catch (error) {
-            console.error("Error calculating gas fee:", error);
+            console.error("Error calculating gas fee in page:", error);
             // Keep previous result on error
         } finally {
             loading = false;
