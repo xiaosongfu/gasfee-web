@@ -3,7 +3,7 @@
     import {
         formatCurrency,
         formatGasPrice,
-        formatRelativeTime,
+        formatTimestamp,
     } from "$lib/utils/formatters";
 
     interface Props {
@@ -51,7 +51,7 @@
         </div>
 
         <div class="last-updated">
-            Last updated: {formatRelativeTime(result.timestamp)}
+            Last updated: {formatTimestamp(result.timestamp)}
         </div>
     {:else}
         <div class="empty-state">
@@ -97,7 +97,7 @@
 
     .results-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 1rem;
     }
 
