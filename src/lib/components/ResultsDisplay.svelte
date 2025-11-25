@@ -4,6 +4,7 @@
         formatCurrency,
         formatGasPrice,
         formatTimestamp,
+        formatETH,
     } from "$lib/utils/formatters";
 
     interface Props {
@@ -13,6 +14,9 @@
     }
 
     let { result, loading, gasPrice }: Props = $props();
+
+    // Calculate total ETH required (gas amount * gas price, both in Gwei, convert to ETH)
+    const totalETH = $derived(result ? (result.gasAmount * gasPrice) / 1e9 : 0);
 </script>
 
 <div class="results-display">
@@ -23,10 +27,17 @@
         </div>
     {:else if result}
         <div class="results-grid">
-            <div class="result-card primary">
+            <div class="result-card primary secondary">
                 <div class="result-label">Total Cost</div>
                 <div class="result-value large">
                     {formatCurrency(result.totalCostUSD)}
+                </div>
+            </div>
+
+            <div class="result-card primary">
+                <div class="result-label">Total ETH</div>
+                <div class="result-value large">
+                    {formatETH(totalETH)}
                 </div>
             </div>
 
@@ -39,13 +50,6 @@
                 <div class="result-label">{result.tokenName} Price</div>
                 <div class="result-value">
                     {formatCurrency(result.tokenPrice)}
-                </div>
-            </div>
-
-            <div class="result-card">
-                <div class="result-label">Gas Amount</div>
-                <div class="result-value">
-                    {result.gasAmount.toLocaleString()}
                 </div>
             </div>
         </div>
@@ -97,7 +101,7 @@
 
     .results-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
 
@@ -122,7 +126,6 @@
         );
         border-color: var(--primary);
         color: white;
-        grid-column: 1 / -1;
     }
 
     .result-label {
