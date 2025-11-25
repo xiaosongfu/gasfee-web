@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { getChainById } from '$lib/config/chains';
 import { env } from '$env/dynamic/private';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, request }) => {
     const chainId = url.searchParams.get('chain');
 
     if (!chainId) {
@@ -15,7 +15,10 @@ export const GET: RequestHandler = async ({ url }) => {
         return json({ error: 'Invalid chain' }, { status: 400 });
     }
 
-    const apiKey = env[chainConfig.apiKeyEnvVar];
+    // Try to get user-provided API key from header, fallback to server env
+    const userApiKey = request.headers.get(`x-${chainConfig.apiKeyEnvVar.toLowerCase()}`);
+    const apiKey = userApiKey || env[chainConfig.apiKeyEnvVar];
+
     if (!apiKey) {
         return json({ error: 'API key not configured for this chain' }, { status: 500 });
     }
@@ -28,7 +31,6 @@ export const GET: RequestHandler = async ({ url }) => {
             const data = await response.json();
 
             if (data.status === '1' && data.result) {
-                // Etherscan v2 API returns prices in ETH, return original values
                 return json({
                     safeGasPrice: data.result.SafeGasPrice,
                     proposeGasPrice: data.result.ProposeGasPrice,

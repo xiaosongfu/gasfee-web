@@ -2,14 +2,17 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, request }) => {
     const symbols = url.searchParams.get('symbols');
 
     if (!symbols) {
         return json({ error: 'Symbols parameter is required' }, { status: 400 });
     }
 
-    const apiKey = env.COINMARKETCAP_API_KEY;
+    // Try to get user-provided API key from header, fallback to server env
+    const userApiKey = request.headers.get('x-coinmarketcap-api-key');
+    const apiKey = userApiKey || env.COINMARKETCAP_API_KEY;
+
     if (!apiKey) {
         return json({ error: 'CoinMarketCap API key not configured' }, { status: 500 });
     }

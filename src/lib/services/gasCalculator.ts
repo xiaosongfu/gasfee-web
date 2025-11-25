@@ -1,9 +1,42 @@
 import type { GasPriceData, TokenPriceData, CalculationResult } from '$lib/types/chains';
 import type { ChainConfig } from '$lib/types/chains';
 
+export interface UserApiKeys {
+    coinmarketcap?: string;
+    etherscan?: string;
+    bscscan?: string;
+    basescan?: string;
+    arbiscan?: string;
+    berachainscan?: string;
+    optimism?: string;
+}
+
 export class GasCalculatorService {
+    private apiKeys: UserApiKeys = {};
+
+    setApiKeys(keys: UserApiKeys) {
+        this.apiKeys = keys;
+    }
+
     async fetchGasPrice(chainId: string): Promise<GasPriceData> {
-        const response = await fetch(`/api/gas-price?chain=${chainId}`);
+        const headers: HeadersInit = {};
+
+        // Add user API key to headers based on chain
+        const keyMap: Record<string, keyof UserApiKeys> = {
+            ethereum: 'etherscan',
+            bnb: 'bscscan',
+            base: 'basescan',
+            arbitrum: 'arbiscan',
+            berachain: 'berachainscan',
+            optimism: 'optimism'
+        };
+
+        const keyName = keyMap[chainId];
+        if (keyName && this.apiKeys[keyName]) {
+            headers[`x-${keyName}_api_key`] = this.apiKeys[keyName]!;
+        }
+
+        const response = await fetch(`/api/gas-price?chain=${chainId}`, { headers });
         if (!response.ok) {
             throw new Error('Failed to fetch gas price');
         }
@@ -11,7 +44,14 @@ export class GasCalculatorService {
     }
 
     async fetchTokenPrice(symbol: string): Promise<TokenPriceData> {
-        const response = await fetch(`/api/token-price?symbols=${symbol}`);
+        const headers: HeadersInit = {};
+
+        // Add CoinMarketCap API key if available
+        if (this.apiKeys.coinmarketcap) {
+            headers['x-coinmarketcap-api-key'] = this.apiKeys.coinmarketcap;
+        }
+
+        const response = await fetch(`/api/token-price?symbols=${symbol}`, { headers });
         if (!response.ok) {
             throw new Error('Failed to fetch token price');
         }

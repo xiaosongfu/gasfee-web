@@ -4,7 +4,9 @@
     import GasInput from "$lib/components/GasInput.svelte";
     import ResultsDisplay from "$lib/components/ResultsDisplay.svelte";
     import RefreshButton from "$lib/components/RefreshButton.svelte";
+    import ApiKeySettings from "$lib/components/ApiKeySettings.svelte";
     import { gasCalculatorService } from "$lib/services/gasCalculator";
+    import type { UserApiKeys } from "$lib/services/gasCalculator";
     import { SUPPORTED_CHAINS } from "$lib/config/chains";
     import type { ChainConfig } from "$lib/types/chains";
     import type { CalculationResult } from "$lib/types/chains";
@@ -15,6 +17,7 @@
     let loading = $state<boolean>(false);
     let currentGasPrice = $state<number>(0);
     let autoRefreshInterval: number | null = null;
+    let showSettings = $state<boolean>(false);
 
     async function calculateGasFee() {
         if (gasAmount <= 0) {
@@ -54,6 +57,17 @@
     }
 
     onMount(() => {
+        // Load API keys from localStorage
+        const saved = localStorage.getItem("apiKeys");
+        if (saved) {
+            try {
+                const keys = JSON.parse(saved);
+                gasCalculatorService.setApiKeys(keys);
+            } catch (e) {
+                console.error("Failed to load saved API keys");
+            }
+        }
+
         // Initial calculation
         calculateGasFee();
 
@@ -62,6 +76,12 @@
             calculateGasFee();
         }, 12000);
     });
+
+    function handleApiKeysSave(keys: UserApiKeys) {
+        gasCalculatorService.setApiKeys(keys);
+        // Refresh data with new keys
+        calculateGasFee();
+    }
 
     onDestroy(() => {
         if (autoRefreshInterval) {
@@ -81,13 +101,39 @@
 <div class="app">
     <header class="header">
         <div class="container">
-            <h1 class="title">
-                <span class="title-icon">⛽</span>
-                EVM Gas Fee Calculator
-            </h1>
-            <p class="subtitle">
-                Real-time gas fee calculations across multiple chains
-            </p>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="title">
+                        <span class="title-icon">⛽</span>
+                        EVM Gas Fee Calculator
+                    </h1>
+                    <p class="subtitle">
+                        Real-time gas fee calculations across multiple chains
+                    </p>
+                </div>
+                <button
+                    class="settings-button"
+                    onclick={() => (showSettings = true)}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <span>API Keys</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -152,6 +198,13 @@
     </footer>
 </div>
 
+{#if showSettings}
+    <ApiKeySettings
+        onSave={handleApiKeysSave}
+        onClose={() => (showSettings = false)}
+    />
+{/if}
+
 <style>
     .app {
         min-height: 100vh;
@@ -168,7 +221,6 @@
 
     .header {
         padding: 3rem 0 2rem;
-        text-align: center;
         background: linear-gradient(
             135deg,
             var(--primary) 0%,
@@ -188,6 +240,45 @@
         bottom: 0;
         background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         opacity: 0.5;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        position: relative;
+    }
+
+    .header-left {
+        flex: 1;
+    }
+
+    .settings-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+    }
+
+    .settings-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-button svg {
+        flex-shrink: 0;
     }
 
     .title {
