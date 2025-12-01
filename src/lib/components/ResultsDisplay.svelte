@@ -4,7 +4,7 @@
         formatCurrency,
         formatGasPrice,
         formatTimestamp,
-        formatETH,
+        formatToken,
     } from "$lib/utils/formatters";
 
     interface Props {
@@ -35,9 +35,9 @@
             </div>
 
             <div class="result-card primary">
-                <div class="result-label">Total ETH</div>
+                <div class="result-label">Total {result.tokenName}</div>
                 <div class="result-value large">
-                    {formatETH(totalETH)}
+                    {formatToken(totalETH, result.tokenName)}
                 </div>
             </div>
 

@@ -48,7 +48,8 @@ export const GET: RequestHandler = async ({ url, request }) => {
             const gasPriceGwei = gasPriceWei / 1e9;
 
             // Format to reasonable decimal places (e.g. 9 decimals for precision)
-            const formattedGasPrice = gasPriceGwei.toFixed(9);
+            // User requested full precision, so we use a high number of decimals or just the string
+            const formattedGasPrice = gasPriceGwei.toString();
 
             return json({
                 safeGasPrice: formattedGasPrice,

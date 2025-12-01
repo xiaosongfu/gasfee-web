@@ -23,7 +23,7 @@
             step="1"
             {value}
             oninput={handleInput}
-            placeholder="Enter gas amount (e.g., 5705753)"
+            placeholder="Enter gas amount (e.g., 2100)"
         />
         <span class="input-suffix">gas</span>
     </div>

@@ -12,7 +12,7 @@
     import type { CalculationResult } from "$lib/types/chains";
 
     let selectedChain = $state<ChainConfig>(SUPPORTED_CHAINS.ethereum);
-    let gasAmount = $state<number>(5705753);
+    let gasAmount = $state<number>(2100);
     let result = $state<CalculationResult | null>(null);
     let loading = $state<boolean>(false);
     let currentGasPrice = $state<number>(0);

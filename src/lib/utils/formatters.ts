@@ -1,7 +1,7 @@
-export function formatNumber(value: number, decimals: number = 2): string {
+export function formatNumber(value: number, decimals: number = 2, maxDecimals?: number): string {
   return value.toLocaleString("en-US", {
     minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    maximumFractionDigits: maxDecimals ?? decimals,
   });
 }
 
@@ -10,12 +10,13 @@ export function formatCurrency(value: number): string {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
-    maximumFractionDigits: 6,
+    maximumFractionDigits: 18, // Show up to 18 decimals for precision
   }).format(value);
 }
 
 export function formatGasPrice(value: number): string {
-  return `${formatNumber(value, 4)} Gwei`;
+  // Show all decimals for gas price
+  return `${formatNumber(value, 0, 18)} Gwei`;
 }
 
 export function formatTimestamp(timestamp: number): string {
@@ -42,6 +43,7 @@ export function formatRelativeTime(timestamp: number): string {
   return `${hours}h ago`;
 }
 
-export function formatETH(value: number): string {
-  return `${formatNumber(value, 8)} ETH`;
+export function formatToken(value: number, tokenName: string): string {
+  // Show up to 18 decimals for ETH
+  return `${formatNumber(value, 0, 18)} ${tokenName}`;
 }
