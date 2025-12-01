@@ -8,14 +8,14 @@
 
     interface ApiKeys {
         coinmarketcap: string;
-        etherscan: string;
+        alchemy: string;
     }
 
     let { onSave, onClose }: Props = $props();
 
     let keys = $state<ApiKeys>({
         coinmarketcap: "",
-        etherscan: "",
+        alchemy: "",
     });
 
     onMount(() => {
@@ -23,10 +23,21 @@
         const saved = localStorage.getItem("apiKeys");
         if (saved) {
             try {
-                keys = JSON.parse(saved);
+                const parsed = JSON.parse(saved);
+                // Migration or loading
+                keys = {
+                    coinmarketcap: parsed.coinmarketcap || "",
+                    alchemy:
+                        parsed.alchemy ||
+                        parsed.etherscan ||
+                        "3gXuij3_Htk8Kyf0VnMv7", // Use default if not present
+                };
             } catch (e) {
                 console.error("Failed to load saved API keys");
             }
+        } else {
+            // Set default if no saved keys
+            keys.alchemy = "3gXuij3_Htk8Kyf0VnMv7";
         }
     });
 
@@ -40,7 +51,7 @@
     function handleClear() {
         keys = {
             coinmarketcap: "",
-            etherscan: "",
+            alchemy: "3gXuij3_Htk8Kyf0VnMv7", // Reset to default
         };
     }
 </script>
@@ -73,14 +84,14 @@
             </div>
 
             <div class="key-section">
-                <h3>Etherscan API Keys</h3>
+                <h3>Alchemy API Key</h3>
                 <input
                     type="password"
-                    bind:value={keys.etherscan}
-                    placeholder="Enter your Etherscan API key"
+                    bind:value={keys.alchemy}
+                    placeholder="Enter your Alchemy API key"
                 />
                 <a
-                    href="https://etherscan.io/apis"
+                    href="https://dashboard.alchemy.com/"
                     target="_blank"
                     class="help-link">Get Key →</a
                 >
@@ -89,7 +100,7 @@
 
         <div class="modal-footer">
             <button class="button secondary" onclick={handleClear}
-                >Clear All</button
+                >Reset to Default</button
             >
             <div class="button-group">
                 <button class="button secondary" onclick={onClose}

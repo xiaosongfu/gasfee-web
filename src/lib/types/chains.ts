@@ -2,6 +2,7 @@ export interface ChainConfig {
 	name: string;
 	chainId: number;
 	nativeToken: string;
+	alchemyNetwork?: string;
 }
 
 export interface GasPriceData {
